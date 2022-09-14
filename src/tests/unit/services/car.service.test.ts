@@ -6,7 +6,7 @@ import { carMock, carMockWithId, invalidCarMock } from '../../mocks/car.mock';
 import { ZodError } from 'zod';
 const { expect } = chai;
 
-describe('Frame Service', () => {
+describe('Testing Car Service', () => {
     const carModel = new CarRepository();
     const carService = new CarService(carModel);    
 
