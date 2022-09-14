@@ -11,8 +11,8 @@ export default class CarRepository extends MongoModel<ICar> {
     super(_model);
   }
 
-  public async create(obj: ICar): Promise<ICar> {
-    return this._model.create(obj);
+  public async create(obj: ICar): Promise<ICar> {        
+    return this._model.create({ ...obj });
   }
 
   public async read(): Promise<ICar[]> {

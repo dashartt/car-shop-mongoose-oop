@@ -1,7 +1,7 @@
 import { ZodError } from 'zod';
 import { ICar, carSchema } from '../interfaces/ICar';
 import MongoModel from '../models/Mongo.model';
-import IService from '../interfaces/IService.interface';
+import IService from '../interfaces/IService';
 import { ErrorTypes } from '../errors';
 
 class CarService implements IService<ICar> {
@@ -16,9 +16,13 @@ class CarService implements IService<ICar> {
         
     if (!parsed.success) {      
       throw new Error(ErrorTypes.InvalidFields) as ZodError;
-    }
-
+    }    
+    
     return this._car.create(parsed.data);
+  }
+  
+  public async read(): Promise<ICar[]> {
+    return this._car.read();
   }
 }
 
