@@ -7,6 +7,6 @@ const carController = CarFactory.make();
 
 route
   .post('/', async (req, res) => carController.create(req, res))
-  .get('/', async (req, res) => carController.read(req, res))
+  .get('/', async (req, res) => carController.read(req, res));
 
 export default route;
