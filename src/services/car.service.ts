@@ -11,18 +11,32 @@ class CarService implements IService<ICar> {
     this._car = model;
   }
 
-  public async create(obj: ICar): Promise<ICar> {
-    const parsed = carSchema.safeParse(obj);        
-        
-    if (!parsed.success) {      
+  // REFACTOR TO ABSTRACT CLASS OU UTIL METHOD
+  public static validate(obj: ICar): ICar | ZodError {
+    const parsed = carSchema.safeParse(obj);
+
+    if (!parsed.success) {
       throw new Error(ErrorTypes.InvalidFields) as ZodError;
-    }    
-    
-    return this._car.create(parsed.data);
+    }
+
+    return parsed.data as ICar;
   }
-  
-  public async read(): Promise<ICar[]> {
+
+  public async create(obj: ICar) {
+    return this._car.create(
+      CarService.validate(obj) as ICar,
+    );
+  }
+
+  public async read() {
     return this._car.read();
+  }
+
+  public async update(_id: string, obj: ICar) {
+    return this._car.update(
+      _id,
+      CarService.validate(obj) as ICar,
+    );
   }
 }
 

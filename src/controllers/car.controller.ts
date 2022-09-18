@@ -24,4 +24,21 @@ export default class CarController {
 
     return res.status(200).json(response);
   }
+
+  public async update(req: Request, res: Response) {
+    const response = await this._service.update(
+      req.params.id,
+      {
+        model: req.body.model,
+        year: req.body.year,
+        status: req.body.status,
+        color: req.body.color,
+        doorsQty: req.body.doorsQty,
+        seatsQty: req.body.seatsQty,
+        buyValue: req.body.buyValue,
+      },
+    );
+
+    return res.status(200).json(response);
+  }
 }

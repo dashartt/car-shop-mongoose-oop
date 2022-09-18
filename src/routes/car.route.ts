@@ -6,6 +6,7 @@ const route = express.Router();
 const carController = CarFactory.make();
 
 route
+  .put('/:id', async (req, res) => carController.update(req, res))
   .post('/', async (req, res) => carController.create(req, res))
   .get('/', async (req, res) => carController.read(req, res));
 

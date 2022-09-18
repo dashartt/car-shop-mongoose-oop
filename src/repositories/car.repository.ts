@@ -1,10 +1,9 @@
+import { ZodError } from 'zod';
 import { isValidObjectId, UpdateQuery } from 'mongoose';
 import { ICar } from '../interfaces/ICar';
 import MongoModel from '../models/Mongo.model';
 import UserModel from '../models/Car.model';
-import constants from '../constants';
-
-const { MONGO_INVALID_ID } = constants;
+import { ErrorTypes } from '../errors';
 
 export default class CarRepository extends MongoModel<ICar> {
   constructor(_model = UserModel) {
@@ -20,24 +19,24 @@ export default class CarRepository extends MongoModel<ICar> {
   }
 
   public async readOne(_id: string): Promise<ICar | null> {
-    if (!isValidObjectId(_id)) throw Error(MONGO_INVALID_ID);
+    if (!isValidObjectId(_id)) throw Error(ErrorTypes.InvalidMongoId) as ZodError;
 
     return this._model.findById(_id);
   }
 
   public async update(_id: string, obj: ICar): Promise<ICar | null> {
-    if (!isValidObjectId(_id)) throw Error(MONGO_INVALID_ID);
+    if (!isValidObjectId(_id)) throw Error(ErrorTypes.InvalidMongoId) as ZodError;
 
-    return this._model.findByIdAndUpdate(
+    const resultQuery = await this._model.findByIdAndUpdate(
       _id,
       { ...obj } as UpdateQuery<ICar>,
       { new: true },
     );
-  }
 
-  public async delete(_id: string): Promise<ICar | null> {
-    if (!isValidObjectId(_id)) throw Error(MONGO_INVALID_ID);
+    if (!resultQuery) {
+      throw Error(ErrorTypes.EntityIdNotFound) as ZodError;      
+    }
 
-    return this._model.findByIdAndDelete(_id);
+    return resultQuery;
   }
 }
