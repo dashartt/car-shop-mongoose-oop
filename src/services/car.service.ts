@@ -42,6 +42,10 @@ class CarService implements IService<ICar> {
       CarService.validate(obj) as ICar,
     );
   }
+
+  public async delete(_id: string) {
+    return this._car.delete(_id);
+  }
 }
 
 export default CarService;

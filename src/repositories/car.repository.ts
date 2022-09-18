@@ -45,4 +45,16 @@ export default class CarRepository extends MongoModel<ICar> {
 
     return resultQuery;
   }
+  
+  public async delete(_id: string): Promise<ICar | null> {
+    if (!isValidObjectId(_id)) throw Error(ErrorTypes.InvalidMongoId) as ZodError;
+
+    const resultQuery = await this._model.findByIdAndDelete(_id);
+
+    if (!resultQuery) {
+      throw Error(ErrorTypes.EntityIdNotFound) as ZodError;      
+    }
+
+    return resultQuery;
+  }
 }
