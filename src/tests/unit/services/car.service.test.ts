@@ -2,7 +2,7 @@ import * as sinon from 'sinon';
 import chai from 'chai';
 import CarRepository from '../../../repositories/car.repository';
 import CarService from '../../../services/car.service';
-import { carskWithId, carWithId, updateCar, updatedCarWithId } from '../../mocks/car.mock';
+import { car, carskWithId, carWithId, updateCar, updatedCarWithId } from '../../mocks/car.mock';
 
 const { expect } = chai;
 
@@ -24,7 +24,7 @@ describe('---> Testing Car Service <---', () => {
 
     describe('---> Successfully validated', () => {
         it('---> Create a car', async () => {
-            const newCar = await carService.create(carWithId);
+            const newCar = await carService.create(car);
 
             expect(newCar).to.be.deep.equal(carWithId);
         }); 

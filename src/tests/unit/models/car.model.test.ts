@@ -2,15 +2,12 @@ import * as sinon from 'sinon';
 import chai from 'chai';
 import { Model } from 'mongoose';
 
-import { car, carsAfterDeleteOne, carskWithId, carWithId, invalidId, updateCar, updatedCarWithId } from '../../mocks/car.mock';
+import { carskWithId, carWithId, updateCar, updatedCarWithId } from '../../mocks/car.mock';
 import CarRepository from '../../../repositories/car.repository';
-import { errorCatalog } from '../../../errors';
 
 const { expect } = chai;
 
-const { InvalidMongoId } = errorCatalog;
-
-describe('---> Testing Car Model <---]', () => {
+describe('---> Testing Car Model <--- ', () => {
     const carRepository = new CarRepository();       
     
     before(() => {
