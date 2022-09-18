@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
 import { ICar } from '../interfaces/ICar';
 
-const carSchema = new Schema<ICar>({
+export const carSchema = new Schema<ICar>({
   model: String,
   color: String,
   buyValue: Number,
