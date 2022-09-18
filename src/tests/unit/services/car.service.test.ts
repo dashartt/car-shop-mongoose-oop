@@ -2,34 +2,43 @@ import * as sinon from 'sinon';
 import chai from 'chai';
 import CarRepository from '../../../repositories/car.repository';
 import CarService from '../../../services/car.service';
-import { carMock, carMockWithId, invalidCarMock } from '../../mocks/car.mock';
-import { ZodError } from 'zod';
-const { expect } = chai;
+import { carskWithId, carWithId, updateCar, updatedCarWithId } from '../../mocks/car.mock';
 
-describe('Testing Car Service', () => {
+const { expect } = chai;
+const INVALID_CAR_ID = '...'
+
+
+describe('---> Testing Car Service <---', () => {
     const carModel = new CarRepository();
     const carService = new CarService(carModel);    
 
     before(() => {
-        sinon.stub(carModel, 'create').resolves(carMockWithId);        
+        sinon.stub(carModel, 'create').resolves(carWithId);
+        sinon.stub(carModel, 'read').resolves(carskWithId);
+        sinon.stub(carModel, 'update').resolves(updatedCarWithId);
+
     })
     after(() => {
         sinon.restore()
     })
 
-    describe('Validate car data before creating', () => {
-        it('When the data is valid', async () => {
-            const validCarData = await carService.create(carMock);
+    describe('---> Successfully validated', () => {
+        it('---> Create a car', async () => {
+            const newCar = await carService.create(carWithId);
 
-            expect(validCarData).to.be.deep.equal(carMockWithId);
-        });
+            expect(newCar).to.be.deep.equal(carWithId);
+        }); 
 
-        it('When the data is incorrect', async () => {
-            try {
-                await carService.create(invalidCarMock);
-            } catch (err: any) {
-                expect(err.message).to.be.equal('InvalidFields');
-            }
+        it('---> List all cars', async () => {
+            const allCars = await carService.read();
+
+            expect(allCars).to.be.deep.equal(carskWithId);
+        }); 
+        
+        it('---> Update a car', async () => {
+            const updateACar = await carService.update(carWithId._id, updateCar);
+
+            expect(updateACar).to.be.deep.equal(updatedCarWithId);
         });
     });
 });

@@ -27,7 +27,7 @@ export default class CarController {
 
   public async update(req: Request, res: Response) {
     const response = await this._service.update(
-      req.params.id,
+      req.params._id,
       {
         model: req.body.model,
         year: req.body.year,
