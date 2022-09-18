@@ -47,6 +47,12 @@ describe('---> Testing Car Model <---]', () => {
             const updatedCar = await carRepository.update(carWithId._id, updateCar);
 
             expect(updatedCar).to.be.deep.equal(updatedCarWithId)                  
+        }); 
+        
+        it('---> Delete a car', async () => {
+            const deleteCar = await carRepository.delete(carWithId._id);
+
+            expect(deleteCar).to.be.deep.equal(carWithId)                  
         });   
     });
 });
