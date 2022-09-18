@@ -32,6 +32,10 @@ class CarService implements IService<ICar> {
     return this._car.read();
   }
 
+  public async readOne(_id: string) {
+    return this._car.readOne(_id);
+  }
+
   public async update(_id: string, obj: ICar) {
     return this._car.update(
       _id,

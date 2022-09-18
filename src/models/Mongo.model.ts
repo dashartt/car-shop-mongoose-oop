@@ -1,7 +1,7 @@
 import { isValidObjectId, Model, UpdateQuery } from 'mongoose';
+import { ZodError } from 'zod';
+import { ErrorTypes } from '../errors';
 import { IModel } from '../interfaces/IModel';
-
-const MONGO_INVALID_ID = 'Invalid Mongo Id';
 
 export default abstract class MongoModel<T> implements IModel<T> {
   protected _model: Model<T>;
@@ -15,8 +15,15 @@ export default abstract class MongoModel<T> implements IModel<T> {
   }
 
   public async readOne(_id: string): Promise<T | null> {
-    if (!isValidObjectId(_id)) throw Error(MONGO_INVALID_ID);
-    return this._model.findOne({ _id });
+    if (!isValidObjectId(_id)) throw Error(ErrorTypes.InvalidMongoId) as ZodError;
+
+    const resultQuery = await this._model.findById(_id);
+
+    if (!resultQuery) {
+      throw Error(ErrorTypes.EntityIdNotFound) as ZodError;      
+    }
+
+    return resultQuery;    
   }
 
   public async read(): Promise<T[]> {
@@ -24,18 +31,30 @@ export default abstract class MongoModel<T> implements IModel<T> {
   }
 
   public async update(_id: string, obj: T): Promise<T | null> {
-    if (!isValidObjectId(_id)) throw Error(MONGO_INVALID_ID);
+    if (!isValidObjectId(_id)) throw Error(ErrorTypes.InvalidMongoId) as ZodError;
 
-    return this._model.findByIdAndUpdate(
+    const resultQuery = await this._model.findByIdAndUpdate(
       _id,
       { ...obj } as UpdateQuery<T>,
       { new: true },
     );
+
+    if (!resultQuery) {
+      throw Error(ErrorTypes.EntityIdNotFound) as ZodError;      
+    }
+
+    return resultQuery;
   }
 
   public async delete(_id: string): Promise<T | null> {
-    if (!isValidObjectId(_id)) throw Error(MONGO_INVALID_ID);
+    if (!isValidObjectId(_id)) throw Error(ErrorTypes.InvalidMongoId) as ZodError;
 
-    return this._model.findByIdAndRemove(_id);
+    const resultQuery = await this._model.findByIdAndRemove(_id);
+
+    if (!resultQuery) {
+      throw Error(ErrorTypes.EntityIdNotFound) as ZodError;      
+    }
+
+    return resultQuery;
   }
 }

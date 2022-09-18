@@ -21,7 +21,13 @@ export default class CarRepository extends MongoModel<ICar> {
   public async readOne(_id: string): Promise<ICar | null> {
     if (!isValidObjectId(_id)) throw Error(ErrorTypes.InvalidMongoId) as ZodError;
 
-    return this._model.findById(_id);
+    const resultQuery = await this._model.findById(_id);
+
+    if (!resultQuery) {
+      throw Error(ErrorTypes.EntityIdNotFound) as ZodError;      
+    }
+
+    return resultQuery;
   }
 
   public async update(_id: string, obj: ICar): Promise<ICar | null> {
