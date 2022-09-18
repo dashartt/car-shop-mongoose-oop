@@ -35,7 +35,13 @@ describe('---> Testing Car Model <---]', () => {
             const allCars = await carRepository.read();
             
             expect(allCars).to.be.deep.equal(carskWithId);
-        });       
+        });   
+        
+        it('---> List a car', async () => {
+            const aCar = await carRepository.readOne(carWithId._id);
+            
+            expect(aCar).to.be.deep.equal(carWithId);
+        }); 
 
         it('---> Update a car', async () => {
             const updatedCar = await carRepository.update(carWithId._id, updateCar);

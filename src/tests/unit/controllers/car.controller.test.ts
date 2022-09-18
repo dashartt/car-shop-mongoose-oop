@@ -19,6 +19,7 @@ describe('---> Testing Car Controller  <---', () => {
     before(() => {
       sinon.stub(carService, 'create').resolves(carWithId);
       sinon.stub(carService, 'read').resolves(carskWithId);
+      sinon.stub(carService, 'readOne').resolves(carWithId);
       sinon.stub(carService, 'update').resolves(updatedCarWithId);
 
       res.status = sinon.stub().returns(res);
@@ -42,6 +43,14 @@ describe('---> Testing Car Controller  <---', () => {
 
       expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true;
       expect((res.json as sinon.SinonStub).calledWith(carskWithId)).to.be.true;
+    });
+
+    it('---> Return a car', async () => {
+      req.params = { _id: carWithId._id }
+      await carController.read(req, res);
+
+      expect((res.status as sinon.SinonStub).calledWith(200)).to.be.true;
+      expect((res.json as sinon.SinonStub).calledWith(carWithId)).to.be.true;
     });
 
     it('---> Update a car', async () => {      

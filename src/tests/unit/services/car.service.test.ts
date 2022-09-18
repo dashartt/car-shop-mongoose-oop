@@ -34,6 +34,13 @@ describe('---> Testing Car Service <---', () => {
 
             expect(allCars).to.be.deep.equal(carskWithId);
         }); 
+
+        // it('---> List a car', async () => {
+            
+        //     const aCar = await carService.readOne(carWithId._id);
+
+        //     expect(aCar).to.be.deep.equal(carWithId);
+        // }); 
         
         it('---> Update a car', async () => {
             const updateACar = await carService.update(carWithId._id, updateCar);
