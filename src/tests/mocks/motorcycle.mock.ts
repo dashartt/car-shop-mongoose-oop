@@ -1,16 +1,5 @@
 import { IMotorcycle } from "../../interfaces/IMotorcycle";
 
-
-export const invalidMotorcycle: IMotorcycle = {
-  color: 'Preto',    
-  model: 'Classic',
-  year: 2001,
-  status: false,
-  buyValue: 200,
-  category: 'Celta',
-  engineCapacity: 3000,
-};
-
 export const motorcycle: IMotorcycle = {
   color: 'Preto',    
   model: 'Classic',
@@ -51,7 +40,7 @@ export const motorcyclesWithId: (IMotorcycle & { _id: string })[]  = [
     year: 2001,
     status: false,
     buyValue: 111,
-    category: 'jadsjsjd',
+    category: 'Street',
     engineCapacity: 500,
   },
   {
@@ -61,7 +50,7 @@ export const motorcyclesWithId: (IMotorcycle & { _id: string })[]  = [
     year: 2002,
     status: true,
     buyValue: 222,
-    category: 'kkskkss',
+    category: 'Custom',
     engineCapacity: 700,
   }
 ]

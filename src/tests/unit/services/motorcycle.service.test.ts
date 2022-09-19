@@ -8,40 +8,40 @@ const { expect } = chai;
 
 describe('---> Testing Motorcycle Service <---', () => {
     const motorcycleModel = new MotorcycleRepository();
-    const motorcycleService = new MotorcycleService(motorcycleModel);    
-
-    before(() => {
-        sinon.stub(motorcycleModel, 'create').resolves(motorcycleWithId);
-        sinon.stub(motorcycleModel, 'read').resolves(motorcyclesWithId);
-        sinon.stub(motorcycleModel, 'readOne').resolves(motorcycleWithId);
-        sinon.stub(motorcycleModel, 'update').resolves(updatedMotorcycleWithId);
-        sinon.stub(motorcycleModel, 'delete').resolves(motorcycleWithId);
-
-    })
-    after(() => {
-        sinon.restore()
-    })
+    const motorcycleService = new MotorcycleService(motorcycleModel);
 
     describe('---> Successfully validated', () => {
+        before(() => {
+            sinon.stub(motorcycleModel, 'create').resolves(motorcycleWithId);
+            sinon.stub(motorcycleModel, 'read').resolves(motorcyclesWithId);
+            sinon.stub(motorcycleModel, 'readOne').resolves(motorcycleWithId);
+            sinon.stub(motorcycleModel, 'update').resolves(updatedMotorcycleWithId);
+            sinon.stub(motorcycleModel, 'delete').resolves(motorcycleWithId);
+
+        })
+        after(() => {
+            sinon.restore()
+        })
+
         it('---> Create a motorcycle', async () => {
             const newMotorcycle = await motorcycleService.create(motorcycle);
 
             expect(newMotorcycle).to.be.deep.equal(motorcycleWithId);
-        }); 
+        });
 
         it('---> List all motorcycles', async () => {
             const allMotorcycles = await motorcycleService.read();
 
             expect(allMotorcycles).to.be.deep.equal(motorcyclesWithId);
-        }); 
+        });
 
         it('---> List a motorcycle', async () => {
-            
+
             const aMotorcycle = await motorcycleService.readOne(motorcycleWithId._id);
 
             expect(aMotorcycle).to.be.deep.equal(motorcycleWithId);
-        }); 
-        
+        });
+
         it('---> Update a motorcycle', async () => {
             const updateAMotorcycle = await motorcycleService.update(motorcycleWithId._id, updateMotorcycle);
 
@@ -52,6 +52,22 @@ describe('---> Testing Motorcycle Service <---', () => {
             const deleteMotorcycle = await motorcycleService.delete(motorcycleWithId._id);
 
             expect(deleteMotorcycle).to.be.deep.equal(motorcycleWithId);
+        });
+    });
+
+    describe('---> Incorrect data', () => {
+        it('---> Don"t create a motorcycle', async () => {
+            await motorcycleService.create({ ...motorcycle, engineCapacity: -100 })
+                .catch((error) => {
+                    expect(error.message).to.be.equal('InvalidFields')
+                });
+        });
+
+        it('---> Don"t update a motorcycle', async () => {
+            await motorcycleService.update(motorcycleWithId._id, { ...updateMotorcycle, engineCapacity: -1000 })
+                .catch((error) => {
+                    expect(error.message).to.be.equal('InvalidFields')
+                });
         });
     });
 });

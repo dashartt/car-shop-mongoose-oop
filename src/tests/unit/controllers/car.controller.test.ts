@@ -1,10 +1,17 @@
-import { Request, Response } from 'express';
-import * as sinon from 'sinon';
 import chai from 'chai';
+import sinon from 'sinon';
+import chaiHttp from 'chai-http';
+import { ZodError } from 'zod';
+import { Request, Response } from 'express';
+
 import CarRepository from '../../../repositories/car.repository';
 import CarService from '../../../services/car.service';
 import CarController from '../../../controllers/car.controller';
 import { car, carskWithId, carWithId, updateCar, updatedCarWithId } from '../../mocks/car.mock';
+import { ErrorTypes } from '../../../errors';
+import app from '../../../app';
+
+chai.use(chaiHttp);
 const { expect } = chai;
 
 describe('---> Testing Car Controller  <---', () => {
@@ -13,7 +20,7 @@ describe('---> Testing Car Controller  <---', () => {
   const carController = new CarController(carService);
 
   const req = {} as Request;
-  const res = {} as Response;
+  const res = {} as Response;  
 
   describe('---> Request with correct data ', () => {
     before(() => {
@@ -72,5 +79,39 @@ describe('---> Testing Car Controller  <---', () => {
       expect((res.status as sinon.SinonStub).calledWith(204)).to.be.true;
       expect((res.json as sinon.SinonStub).calledWith()).to.be.true;
     });
+  });
+
+  describe('---> Request with incorrect data ', () => {         
+    it('---> Don"t create a car', async () => {      
+      const { status, body } = await chai
+        .request(app).post('/cars').send({ ...car, doorsQty: 100 });
+
+      expect(status).to.be.equal(400);
+      expect(body).to.be.deep.equal({ error: 'Invalid fields'});      
+    });       
+
+    it('---> Don"t update a car with incorrect or non-existent ID', async () => {      
+      const { status, body } = await chai
+        .request(app).put(`/cars/${carWithId._id}xxx`).send({ ...updateCar });
+
+      expect(status).to.be.equal(400);
+      expect(body).to.be.deep.equal({  error: 'Id must have 24 hexadecimal characters' });      
+    });  
+
+    it('---> Don"t update a car with incorrect car data', async () => {      
+      const { status, body } = await chai
+        .request(app).put(`/cars/${carWithId._id}`).send({ ...updateCar, seatsQty: 100 });
+
+      expect(status).to.be.equal(400);
+      expect(body).to.be.deep.equal({  error: 'Invalid fields' });      
+    });  
+
+    it('---> Don"t delete a car with incorrect or non-existent ID', async () => {      
+      const { status, body } = await chai
+        .request(app).delete(`/cars/${carWithId._id}xxx`);
+
+      expect(status).to.be.equal(400);
+      expect(body).to.be.deep.equal({ error: 'Id must have 24 hexadecimal characters' });      
+    });  
   });
 })

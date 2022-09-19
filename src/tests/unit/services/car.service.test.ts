@@ -3,26 +3,27 @@ import chai from 'chai';
 import CarRepository from '../../../repositories/car.repository';
 import CarService from '../../../services/car.service';
 import { car, carskWithId, carWithId, updateCar, updatedCarWithId } from '../../mocks/car.mock';
+import { ZodError } from 'zod';
 
 const { expect } = chai;
 
 describe('---> Testing Car Service <---', () => {
     const carModel = new CarRepository();
-    const carService = new CarService(carModel);    
-
-    before(() => {
-        sinon.stub(carModel, 'create').resolves(carWithId);
-        sinon.stub(carModel, 'read').resolves(carskWithId);
-        sinon.stub(carModel, 'readOne').resolves(carWithId);
-        sinon.stub(carModel, 'update').resolves(updatedCarWithId);
-        sinon.stub(carModel, 'delete').resolves(carWithId);
-
-    })
-    after(() => {
-        sinon.restore()
-    })
+    const carService = new CarService(carModel);       
 
     describe('---> Successfully validated', () => {
+        before(() => {
+            sinon.stub(carModel, 'create').resolves(carWithId);
+            sinon.stub(carModel, 'read').resolves(carskWithId);
+            sinon.stub(carModel, 'readOne').resolves(carWithId);
+            sinon.stub(carModel, 'update').resolves(updatedCarWithId);
+            sinon.stub(carModel, 'delete').resolves(carWithId);
+        })
+
+        after(() => {
+            sinon.restore()
+        })
+
         it('---> Create a car', async () => {
             const newCar = await carService.create(car);
 
@@ -53,5 +54,21 @@ describe('---> Testing Car Service <---', () => {
 
             expect(deleteCar).to.be.deep.equal(carWithId);
         });
+    });
+
+    describe('---> Incorrect data', () => {   
+        it('---> Don"t create a car', async () => {            
+            await carService.create({ ...car, doorsQty: 1000})
+                .catch((error) => {
+                    expect(error.message).to.be.equal('InvalidFields')
+                });
+        }); 
+
+        it('---> Don"t update a car', async () => {            
+            await carService.update(carWithId._id, { ...updateCar, doorsQty: 1000 })
+                .catch((error) => {
+                    expect(error.message).to.be.equal('InvalidFields')
+                });
+        }); 
     });
 });
